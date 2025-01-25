@@ -1,21 +1,24 @@
 precision mediump float;
 
-uniform vec2 u_resolution;
+uniform vec2 u_plane_resolution;
 uniform float u_time;
+
+varying vec2 vUv;
 
 #include "lygia/generative/pnoise.glsl"
 
 void main() {
-    vec2 st = gl_FragCoord.xy / u_resolution;
+    vec2 st = vUv;
+    st *= 10.;
 
-    vec4 color = vec4(vec3(0.0), 1.0);
-    vec2 pixel = 1.0 / u_resolution.xy;
+    vec3 color = vec3(153., 192., 51.) / 255.;
 
-    float d2 = pnoise(vec2(st * 5. + u_time), vec2(1.2, 3.4)) * 0.5 + 0.5;
-    float d3 = pnoise(vec3(st * 5., u_time), vec3(1.2, 3.4, 5.6)) * 0.5 + 0.5;
+    //    vec3 color = vec3(vUv.x, vUv.y, 0.0);
 
-    color += mix(d2, d3, step(0.5, st.x));
+    //    vec3 color = vec3(0.0);
+    //
+    //    float noise = pnoise(st, vec2(1.2, 3.4)) * 0.5 + 0.5;
+    //    color += noise;
 
-    gl_FragColor = color;
-    //    gl_FragColor = vec4(0.2, 0.5, 0.7, 1.0);
+    gl_FragColor = vec4(color, 1.0);
 }
