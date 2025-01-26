@@ -11,7 +11,7 @@ void main() {
     vec2 st = position.xz / u_plane_resolution;
     st *= 4.;
 
-    float noise = pnoise(vec2(st), vec2(1.2, 3.4)) * 0.5 + 0.5;
+    float noise = pnoise(vec2(st), vec2(1.2, 3.4)) * 0.5;
     noise *= 150.;
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position + vec3(0., noise, 0.), 1.0);

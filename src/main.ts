@@ -5,13 +5,15 @@ import {createGUI} from "./gui.ts";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 import landscapeVertexShader from "./shaders/landscape.vert";
 import landscapeFragmentShader from "./shaders/landscape.frag";
+import grassVertexShader from "./shaders/grass.vert";
+import grassFragmentShader from "./shaders/grass.frag";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
+import {randomXZPositionMatrix} from "./util.ts";
 
 const TIME_SPEED = .05;
 
-const PLANE_WIDTH = 1000;
-const PLANE_HEIGHT = 1000;
-const PLANE_WIDTH_SEGMENTS = 128;
-const PLANE_HEIGHT_SEGMENTS = 128;
+const PLANE_SIZE = 1000;
+const PLANE_SEGMENTS = 128;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xd8ecff);
@@ -29,8 +31,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const canvas = renderer.domElement;
 document.body.appendChild(canvas);
 
-const uniforms = { // arrays in here have to be padded to the max length
-    u_plane_resolution: {value: new THREE.Vector2(PLANE_WIDTH, PLANE_HEIGHT)},
+const plane_uniforms = { // arrays in here have to be padded to the max length
+    u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
+    u_time: {value: 0.0},
+}
+
+const grass_uniforms = { // arrays in here have to be padded to the max length
     u_time: {value: 0.0},
 }
 
@@ -43,29 +49,56 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // createLighting(scene);
 
-const landscapeGeometry = new THREE.PlaneGeometry(PLANE_WIDTH, PLANE_HEIGHT, PLANE_WIDTH_SEGMENTS - 1, PLANE_HEIGHT_SEGMENTS - 1);
+const landscapeGeometry = new THREE.PlaneGeometry(PLANE_SIZE, PLANE_SIZE, PLANE_SEGMENTS - 1, PLANE_SEGMENTS - 1);
 landscapeGeometry.rotateX(-Math.PI / 2);
 
 const landscapeMaterial = new THREE.ShaderMaterial
 ({
-    uniforms,
+    uniforms: plane_uniforms,
     vertexShader: landscapeVertexShader,
     fragmentShader: landscapeFragmentShader,
     wireframe: false
 });
 
+const grassMaterial = new THREE.ShaderMaterial
+({
+    uniforms: grass_uniforms,
+    vertexShader: grassVertexShader,
+    fragmentShader: grassFragmentShader,
+    wireframe: false,
+    vertexColors: true,
+});
+
 const landscape = new THREE.Mesh(landscapeGeometry, landscapeMaterial);
 scene.add(landscape);
 
+const loader = new GLTFLoader();
 
-const stats = createGUI(landscapeMaterial);
+loader.load('/grass.glb', function (gltf) {
+    const grass = gltf.scene.children
+        .find(child => child.type === 'Mesh')!! as THREE.Mesh;
+    grass.material = grassMaterial;
+    const count = 1000;
+    const instancedGrassMesh = new THREE.InstancedMesh(grass.geometry, grass.material, count);
+    const matrix = new THREE.Matrix4();
+
+    for (let i = 0; i < count; i++) {
+        randomXZPositionMatrix(matrix, 20, PLANE_SIZE);
+        instancedGrassMesh.setMatrixAt(i, matrix);
+    }
+
+    scene.add(instancedGrassMesh);
+}, undefined, undefined);
+
+
+const stats = createGUI(landscapeMaterial, grassMaterial);
 
 const clock = new THREE.Clock();
 let delta = 0;
 
 function animate() {
     requestAnimationFrame(animate);
-    uniforms.u_time.value += TIME_SPEED * delta;
+    plane_uniforms.u_time.value += TIME_SPEED * delta;
     delta = clock.getDelta();
 
     composer.render();

@@ -6,3 +6,13 @@ export function addSanityCube(scene: THREE.Scene) {
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 }
+
+export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor: number, planeSize: number): THREE.Matrix4 {
+    const position = new THREE.Vector3();
+    const scale = new THREE.Vector3();
+    position.x = Math.random() * planeSize - planeSize / 2.;
+    position.z = Math.random() * planeSize - planeSize / 2.;
+    scale.x = scale.y = scale.z = uniformScaleFactor;
+
+    return matrix.compose(position, new THREE.Quaternion(), scale);
+}
