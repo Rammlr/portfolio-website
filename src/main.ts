@@ -58,7 +58,8 @@ const landscapeMaterial = new THREE.ShaderMaterial
     uniforms: plane_uniforms,
     vertexShader: landscapeVertexShader,
     fragmentShader: landscapeFragmentShader,
-    wireframe: false
+    wireframe: false,
+    side: THREE.DoubleSide,
 });
 
 const grassMaterial = new THREE.ShaderMaterial
@@ -68,6 +69,7 @@ const grassMaterial = new THREE.ShaderMaterial
     fragmentShader: grassFragmentShader,
     wireframe: false,
     vertexColors: true,
+    side: THREE.DoubleSide,
 });
 
 const landscape = new THREE.Mesh(landscapeGeometry, landscapeMaterial);
@@ -79,12 +81,12 @@ loader.load('/grass.glb', function (gltf) {
     const grass = gltf.scene.children
         .find(child => child.type === 'Mesh')!! as THREE.Mesh;
     grass.material = grassMaterial;
-    const count = 8000;
+    const count = 200000;
     const instancedGrassMesh = new THREE.InstancedMesh(grass.geometry, grass.material, count);
     const matrix = new THREE.Matrix4();
 
     for (let i = 0; i < count; i++) {
-        randomXZPositionMatrix(matrix, 20, PLANE_SIZE - 15);
+        randomXZPositionMatrix(matrix, 6, PLANE_SIZE - 15);
         instancedGrassMesh.setMatrixAt(i, matrix);
     }
 

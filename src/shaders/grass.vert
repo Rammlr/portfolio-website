@@ -8,7 +8,8 @@ uniform vec2 u_plane_resolution;
 #include "landscapeNoise.glsl"
 
 vec4 sway(vec4 position, vec3 swayDirection, float swayAmount, float swaySpeed) {
-    return position + vec4(swayDirection * swayAmount * (cos(u_time * swaySpeed) + sin(u_time * swaySpeed * 3.)) / 2., 0.);
+    float phase = u_time * swaySpeed;
+    return position + vec4(swayDirection * swayAmount * (cos(phase) + sin(phase * 3.)) / 2., 0.);
 }
 
 void main() {
@@ -17,7 +18,7 @@ void main() {
     vec4 grassPosition = instanceMatrix * vec4(position, 1.0);
     vec2 st = grassPosition.xz / u_plane_resolution;
 
-    grassPosition += sway(grassPosition, normalize(vec3(3., 0., -1.)), pow(vColor.r, .71) * 65., 7.);
+    grassPosition += sway(grassPosition, normalize(vec3(3., 0., -1.)), pow(vColor.r, .71) * 10., 7.);
     grassPosition += getLandscapeNoiseOffset(st) * 2.; // honestly dunno why we need * 2 here
 
     gl_Position = projectionMatrix * modelViewMatrix * grassPosition;

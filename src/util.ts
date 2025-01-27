@@ -13,6 +13,11 @@ export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor
     position.x = Math.random() * planeSize - planeSize / 2.;
     position.z = Math.random() * planeSize - planeSize / 2.;
     scale.x = scale.y = scale.z = uniformScaleFactor;
+    scale.y *= Math.random() * .5 + .5;
 
-    return matrix.compose(position, new THREE.Quaternion(), scale);
+    // this removes the need for billboarding
+    const rotation = new THREE.Quaternion()
+        .setFromAxisAngle(new THREE.Vector3(0, Math.random(), 0), Math.PI / 4);
+
+    return matrix.compose(position, rotation, scale);
 }
