@@ -37,6 +37,7 @@ const plane_uniforms = { // arrays in here have to be padded to the max length
 }
 
 const grass_uniforms = { // arrays in here have to be padded to the max length
+    u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
     u_time: {value: 0.0},
 }
 
@@ -78,12 +79,12 @@ loader.load('/grass.glb', function (gltf) {
     const grass = gltf.scene.children
         .find(child => child.type === 'Mesh')!! as THREE.Mesh;
     grass.material = grassMaterial;
-    const count = 1000;
+    const count = 8000;
     const instancedGrassMesh = new THREE.InstancedMesh(grass.geometry, grass.material, count);
     const matrix = new THREE.Matrix4();
 
     for (let i = 0; i < count; i++) {
-        randomXZPositionMatrix(matrix, 20, PLANE_SIZE);
+        randomXZPositionMatrix(matrix, 20, PLANE_SIZE - 15);
         instancedGrassMesh.setMatrixAt(i, matrix);
     }
 
@@ -99,6 +100,7 @@ let delta = 0;
 function animate() {
     requestAnimationFrame(animate);
     plane_uniforms.u_time.value += TIME_SPEED * delta;
+    grass_uniforms.u_time.value += TIME_SPEED * delta;
     delta = clock.getDelta();
 
     composer.render();
