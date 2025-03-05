@@ -31,15 +31,22 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const canvas = renderer.domElement;
 document.body.appendChild(canvas);
 
-const plane_uniforms = { // arrays in here have to be padded to the max length
+let planeUniforms = { // arrays in here have to be padded to the max length
     u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
     u_time: {value: 0.0},
-}
+};
 
-const grass_uniforms = { // arrays in here have to be padded to the max length
+let directionalLight = {
+    color: new THREE.Vector3(1.0), direction: new THREE.Vector4(1.)
+};
+
+let grassUniforms = { // arrays in here have to be padded to the max length
     u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
     u_time: {value: 0.0},
-}
+    u_material_properties: {value: new THREE.Vector4(.8, .15, .05, 1.)},
+    u_directional_light: {value: directionalLight},
+    u_show_normals: {value: false},
+};
 
 const renderPass = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
@@ -55,7 +62,7 @@ landscapeGeometry.rotateX(-Math.PI / 2);
 
 const landscapeMaterial = new THREE.ShaderMaterial
 ({
-    uniforms: plane_uniforms,
+    uniforms: planeUniforms,
     vertexShader: landscapeVertexShader,
     fragmentShader: landscapeFragmentShader,
     wireframe: false,
@@ -64,7 +71,7 @@ const landscapeMaterial = new THREE.ShaderMaterial
 
 const grassMaterial = new THREE.ShaderMaterial
 ({
-    uniforms: grass_uniforms,
+    uniforms: grassUniforms,
     vertexShader: grassVertexShader,
     fragmentShader: grassFragmentShader,
     wireframe: false,
@@ -79,7 +86,7 @@ const loader = new GLTFLoader();
 
 loader.load('/grass.glb', function (gltf) {
     const grass = gltf.scene.children
-        .find(child => child.type === 'Mesh')!! as THREE.Mesh;
+        .find(child => child.type === 'Mesh')! as THREE.Mesh;
     grass.material = grassMaterial;
     const count = 200000;
     const instancedGrassMesh = new THREE.InstancedMesh(grass.geometry, grass.material, count);
@@ -94,15 +101,15 @@ loader.load('/grass.glb', function (gltf) {
 }, undefined, undefined);
 
 
-const stats = createGUI(landscapeMaterial, grassMaterial);
+const stats = createGUI(landscapeMaterial, grassMaterial, grassUniforms, directionalLight);
 
 const clock = new THREE.Clock();
 let delta = 0;
 
 function animate() {
     requestAnimationFrame(animate);
-    plane_uniforms.u_time.value += TIME_SPEED * delta;
-    grass_uniforms.u_time.value += TIME_SPEED * delta;
+    planeUniforms.u_time.value += TIME_SPEED * delta;
+    grassUniforms.u_time.value += TIME_SPEED * delta;
     delta = clock.getDelta();
 
     composer.render();
