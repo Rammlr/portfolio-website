@@ -16,6 +16,7 @@ export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor
     scale.y *= Math.random() * .5 + .5;
 
     // this removes the need for billboarding
+    // TODO: this fucks the normals somehow
     const rotation = new THREE.Quaternion()
         .setFromAxisAngle(new THREE.Vector3(0, Math.random(), 0), Math.PI / 4);
 

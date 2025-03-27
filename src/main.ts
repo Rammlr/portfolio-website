@@ -9,6 +9,7 @@ import grassVertexShader from "./shaders/grass.vert";
 import grassFragmentShader from "./shaders/grass.frag";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 import {randomXZPositionMatrix} from "./util.ts";
+import {MyDirectionalLight} from "./types.ts";
 
 const TIME_SPEED = .05;
 
@@ -36,14 +37,14 @@ let planeUniforms = { // arrays in here have to be padded to the max length
     u_time: {value: 0.0},
 };
 
-let directionalLight = {
-    color: new THREE.Vector3(1.0), direction: new THREE.Vector4(1.)
+let directionalLight: MyDirectionalLight = {
+    color: new THREE.Vector3(1.0, 1.0, 1.0), direction: new THREE.Vector4(1.)
 };
 
 let grassUniforms = { // arrays in here have to be padded to the max length
     u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
     u_time: {value: 0.0},
-    u_material_properties: {value: new THREE.Vector4(.8, .15, .05, 1.)},
+    u_material_properties: {value: new THREE.Vector4(.1, .7, .2, 1.)},
     u_directional_light: {value: directionalLight},
     u_show_normals: {value: false},
 };

@@ -17,7 +17,7 @@ vec4 sway(vec3 swayDirection, float swayAmount, float swaySpeed) {
 void main() {
     // color is a build in for vertex colors built into the grass model
     vColor = color.rgb;
-    vNormal = inverse(transpose(instanceMatrix)) * vec4(normalize(normal), 1.);
+    vNormal = inverse(transpose(instanceMatrix)) * vec4(normalize(vec3(normal)), 1.);
     vec4 grassPosition = instanceMatrix * vec4(position, 1.0);
     vec2 st = grassPosition.xz / u_plane_resolution;
 
