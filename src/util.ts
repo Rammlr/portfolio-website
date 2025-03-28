@@ -7,7 +7,7 @@ export function addSanityCube(scene: THREE.Scene) {
     scene.add(cube);
 }
 
-export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor: number, planeSize: number): THREE.Matrix4 {
+export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor: number, planeSize: number) {
     const position = new THREE.Vector3();
     const scale = new THREE.Vector3();
     position.x = Math.random() * planeSize - planeSize / 2.;
@@ -15,10 +15,17 @@ export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor
     scale.x = scale.y = scale.z = uniformScaleFactor;
     scale.y *= Math.random() * .5 + .5;
 
-    // this removes the need for billboarding
-    // TODO: this fucks the normals somehow
+    // this removes the need for billboarding, random rotation between +-90 degrees
     const rotation = new THREE.Quaternion()
-        .setFromAxisAngle(new THREE.Vector3(0, Math.random(), 0), Math.PI / 4);
+        .setFromAxisAngle(new THREE.Vector3(0, 1, 0), (Math.random() - .5) * 2. * Math.PI / 4);
 
-    return matrix.compose(position, rotation, scale);
+    matrix.compose(position, rotation, scale);
+    // console.log(new THREE.Vector3(1, 0, 0).applyMatrix3(
+    //     new THREE.Matrix3().setFromMatrix4(matrix).invert().transpose()
+    // ).normalize());
+}
+
+export function vector3ToHexNumber(vector: THREE.Vector3): number {
+    const color = new THREE.Color(vector.x, vector.y, vector.z);
+    return color.getHex();
 }

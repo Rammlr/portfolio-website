@@ -8,7 +8,7 @@ import landscapeFragmentShader from "./shaders/landscape.frag";
 import grassVertexShader from "./shaders/grass.vert";
 import grassFragmentShader from "./shaders/grass.frag";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
-import {randomXZPositionMatrix} from "./util.ts";
+import {randomXZPositionMatrix, vector3ToHexNumber} from "./util.ts";
 import {MyDirectionalLight} from "./types.ts";
 
 const TIME_SPEED = .05;
@@ -38,7 +38,7 @@ let planeUniforms = { // arrays in here have to be padded to the max length
 };
 
 let directionalLight: MyDirectionalLight = {
-    color: new THREE.Vector3(1.0, 1.0, 1.0), direction: new THREE.Vector4(1.)
+    color: new THREE.Vector3(1.0, 1.0, 1.0), direction: new THREE.Vector3(1., -.5, 0.)
 };
 
 let grassUniforms = { // arrays in here have to be padded to the max length
@@ -101,6 +101,9 @@ loader.load('/grass.glb', function (gltf) {
     scene.add(instancedGrassMesh);
 }, undefined, undefined);
 
+const arrowHelper = new THREE.ArrowHelper(directionalLight.direction, new THREE.Vector3(0, 150, 0), 100, vector3ToHexNumber(directionalLight.color));
+scene.add(arrowHelper);
+
 
 const stats = createGUI(landscapeMaterial, grassMaterial, grassUniforms, directionalLight);
 
@@ -114,7 +117,9 @@ function animate() {
     delta = clock.getDelta();
 
     composer.render();
-    controls.update(delta)
+    controls.update(delta);
+    arrowHelper.setDirection(directionalLight.direction.normalize());
+    arrowHelper.setColor(vector3ToHexNumber(directionalLight.color))
     stats.update();
 }
 

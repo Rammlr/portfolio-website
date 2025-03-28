@@ -14,7 +14,6 @@ export function createGUI(landscapeMaterial: THREE.ShaderMaterial, grassMaterial
     gui.add(grassUniforms.u_show_normals, 'value').name('Show Grass Normals');
 
     const directionalLightFolder = gui.addFolder('Directional Light');
-    console.log(directionalLight)
     directionalLightFolder.addVector('Directional Light Color', directionalLight.color);
     directionalLightFolder.addVector('Directional Light Direction', directionalLight.direction);
 
