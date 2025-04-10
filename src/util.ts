@@ -20,9 +20,6 @@ export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor
         .setFromAxisAngle(new THREE.Vector3(0, 1, 0), (Math.random() - .5) * 2. * Math.PI / 4);
 
     matrix.compose(position, rotation, scale);
-    // console.log(new THREE.Vector3(1, 0, 0).applyMatrix3(
-    //     new THREE.Matrix3().setFromMatrix4(matrix).invert().transpose()
-    // ).normalize());
 }
 
 export function vector3ToHexNumber(vector: THREE.Vector3): number {

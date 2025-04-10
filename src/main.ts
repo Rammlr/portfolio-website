@@ -64,8 +64,6 @@ composer.addPass(renderPass);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 
-// createLighting(scene);
-
 const landscapeGeometry = new THREE.PlaneGeometry(PLANE_SIZE, PLANE_SIZE, PLANE_SEGMENTS - 1, PLANE_SEGMENTS - 1);
 landscapeGeometry.rotateX(-Math.PI / 2);
 
