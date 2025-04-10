@@ -39,8 +39,12 @@ let planeUniforms = { // arrays in here have to be padded to the max length
 };
 
 let directionalLight: MyDirectionalLight = {
-    color: new THREE.Vector3(1.0, 1.0, .7), direction: new THREE.Vector3(-1., -.5, 0.)
+    color: new THREE.Vector3(1.0, 1.0, .7), direction: new THREE.Vector3(-1., -.5, -0.25)
 };
+
+let directionalLight2 = {
+    color: new THREE.Vector3(1., 1., .7), direction: new THREE.Vector3(-1., -.5, 0.25)
+}
 
 let grassMaterialProperties: MaterialProperties = {
     ka: 0.3,
@@ -53,7 +57,7 @@ let grassUniforms = { // arrays in here have to be padded to the max length
     u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
     u_time: {value: 0.0},
     u_material_properties: {value: grassMaterialProperties},
-    u_directional_light: {value: directionalLight},
+    u_directional_lights: {value: [directionalLight, directionalLight2]},
     u_show_normals: {value: false},
 };
 

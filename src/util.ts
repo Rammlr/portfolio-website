@@ -13,11 +13,11 @@ export function randomXZPositionMatrix(matrix: THREE.Matrix4, uniformScaleFactor
     position.x = Math.random() * planeSize - planeSize / 2.;
     position.z = Math.random() * planeSize - planeSize / 2.;
     scale.x = scale.y = scale.z = uniformScaleFactor;
-    scale.y *= Math.random() * .5 + .5;
+    scale.y *= Math.random() + .5;
 
     // this removes the need for billboarding, random rotation between +-90 degrees
     const rotation = new THREE.Quaternion()
-        .setFromAxisAngle(new THREE.Vector3(0, 1, 0), (Math.random() - .5) * 2. * Math.PI / 4);
+        .setFromAxisAngle(new THREE.Vector3(0, 1, 0), (Math.random() - .5) * 2. * Math.PI / 6.);
 
     matrix.compose(position, rotation, scale);
 }

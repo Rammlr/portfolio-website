@@ -1,6 +1,7 @@
 precision mediump float;
 
 const vec4 I_a = vec4(1.0);
+const int DIRECTIONAL_LIGHT_COUNT = 2;
 
 struct DirectionalLight {
     vec4 color;
@@ -20,7 +21,7 @@ varying vec4 vWorldPosition;
 
 uniform float u_time;
 uniform MaterialProperties u_material_properties;
-uniform DirectionalLight u_directional_light;
+uniform DirectionalLight u_directional_lights[DIRECTIONAL_LIGHT_COUNT];
 uniform bool u_show_normals;
 
 vec3 extractCamPosition() {
@@ -41,11 +42,11 @@ vec4 calculatePhongIllumination(vec3 L, vec3 N, vec3 V, vec4 lightColor, vec4 ob
     return diffuseLighting + specularLighting;
 }
 
-vec4 calculateDirectionalLight(vec3 worldPosition, vec3 N, vec3 camPosition, vec4 objectColor) {
+vec4 calculateDirectionalLight(vec3 worldPosition, vec3 N, vec3 camPosition, DirectionalLight directionalLight, vec4 objectColor) {
     // Vector from this vertex to the light source is just -direction vector
-    vec3 L = normalize(-u_directional_light.direction.xyz);
+    vec3 L = normalize(-directionalLight.direction.xyz);
     vec3 V = normalize(camPosition - worldPosition);
-    vec4 lightColor = u_directional_light.color;
+    vec4 lightColor = directionalLight.color;
 
     return calculatePhongIllumination(L, N, V, lightColor, objectColor);
 }
@@ -57,7 +58,11 @@ vec4 calculateLighting(vec4 objectColor) {
 
     vec4 I = ka * I_a * objectColor;
 
-    I += calculateDirectionalLight(vWorldPosition.xyz, N, cam_pos, objectColor);
+    for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++) {
+        // dividing by the count here is a cheap hack to make the scene not overly bright,
+        // usually this should be done within the light properties or in some other way
+        I += calculateDirectionalLight(vWorldPosition.xyz, N, cam_pos, u_directional_lights[i], objectColor) / float(DIRECTIONAL_LIGHT_COUNT);
+    }
 
     return I;
 }
