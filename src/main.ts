@@ -9,12 +9,13 @@ import grassVertexShader from "./shaders/grass.vert";
 import grassFragmentShader from "./shaders/grass.frag";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 import {randomXZPositionMatrix, vector3ToHexNumber} from "./util.ts";
-import {MyDirectionalLight} from "./types.ts";
+import {MaterialProperties, MyDirectionalLight} from "./types.ts";
 
 const TIME_SPEED = .05;
 
 const PLANE_SIZE = 1000;
 const PLANE_SEGMENTS = 128;
+const GRASS_COUNT = 500000;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xd8ecff);
@@ -38,13 +39,20 @@ let planeUniforms = { // arrays in here have to be padded to the max length
 };
 
 let directionalLight: MyDirectionalLight = {
-    color: new THREE.Vector3(1.0, 1.0, 1.0), direction: new THREE.Vector3(1., -.5, 0.)
+    color: new THREE.Vector3(1.0, 1.0, .7), direction: new THREE.Vector3(-1., -.5, 0.)
+};
+
+let grassMaterialProperties: MaterialProperties = {
+    ka: 0.3,
+    kd: 0.65,
+    ks: 0.05,
+    alpha: 1.0
 };
 
 let grassUniforms = { // arrays in here have to be padded to the max length
     u_plane_resolution: {value: new THREE.Vector2(PLANE_SIZE, PLANE_SIZE)},
     u_time: {value: 0.0},
-    u_material_properties: {value: new THREE.Vector4(.1, .7, .2, 1.)},
+    u_material_properties: {value: grassMaterialProperties},
     u_directional_light: {value: directionalLight},
     u_show_normals: {value: false},
 };
@@ -89,11 +97,10 @@ loader.load('/grass.glb', function (gltf) {
     const grass = gltf.scene.children
         .find(child => child.type === 'Mesh')! as THREE.Mesh;
     grass.material = grassMaterial;
-    const count = 200000;
-    const instancedGrassMesh = new THREE.InstancedMesh(grass.geometry, grass.material, count);
+    const instancedGrassMesh = new THREE.InstancedMesh(grass.geometry, grass.material, GRASS_COUNT);
     const matrix = new THREE.Matrix4();
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < GRASS_COUNT; i++) {
         randomXZPositionMatrix(matrix, 6, PLANE_SIZE - 15);
         instancedGrassMesh.setMatrixAt(i, matrix);
     }
@@ -105,7 +112,7 @@ const arrowHelper = new THREE.ArrowHelper(directionalLight.direction, new THREE.
 scene.add(arrowHelper);
 
 
-const stats = createGUI(landscapeMaterial, grassMaterial, grassUniforms, directionalLight);
+const stats = createGUI(landscapeMaterial, grassMaterial, grassUniforms, directionalLight, grassMaterialProperties);
 
 const clock = new THREE.Clock();
 let delta = 0;

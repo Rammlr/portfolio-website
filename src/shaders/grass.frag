@@ -7,12 +7,19 @@ struct DirectionalLight {
     vec4 direction;
 };
 
+struct MaterialProperties {
+    float ka; // ambient coefficient
+    float kd; // diffuse coefficient
+    float ks; // specular coefficient
+    float alpha; // shininess exponent
+};
+
 varying vec3 vColor;
 varying vec4 vNormal;
 varying vec4 vWorldPosition;
 
 uniform float u_time;
-uniform vec4 u_material_properties;
+uniform MaterialProperties u_material_properties;
 uniform DirectionalLight u_directional_light;
 uniform bool u_show_normals;
 
@@ -21,9 +28,9 @@ vec3 extractCamPosition() {
 }
 
 vec4 calculatePhongIllumination(vec3 L, vec3 N, vec3 V, vec4 lightColor, vec4 objectColor) {
-    float kd = u_material_properties.y;
-    float ks = u_material_properties.z;
-    float alpha = u_material_properties.w;
+    float kd = u_material_properties.kd;
+    float ks = u_material_properties.ks;
+    float alpha = u_material_properties.alpha;
 
     vec3 R = normalize(reflect(-L, N));
 
@@ -46,7 +53,7 @@ vec4 calculateDirectionalLight(vec3 worldPosition, vec3 N, vec3 camPosition, vec
 vec4 calculateLighting(vec4 objectColor) {
     vec3 cam_pos = extractCamPosition();
     vec3 N = vNormal.xyz;
-    float ka = u_material_properties.x;
+    float ka = u_material_properties.ka;
 
     vec4 I = ka * I_a * objectColor;
 
