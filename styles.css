@@ -26,3 +26,11 @@ body {
 .hidden {
     display: none;
 }
+
+.dg .property-name {
+    width: 70% !important;
+}
+
+.dg .c {
+    width: 30% !important;
+}
