@@ -1,21 +1,42 @@
 import * as THREE from 'three';
+import {SRGBColorSpace} from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 import {MaterialProperties, MyDirectionalLight} from './types.ts';
-import Dat from 'dat.gui';
+import Dat, {GUI} from 'dat.gui';
 import init from 'three-dat.gui';
 
 init(Dat);
 
-export function createGUI(landscapeMaterial: THREE.ShaderMaterial, grassMaterial: THREE.ShaderMaterial, grassUniforms: any, directionalLight: MyDirectionalLight, grassMaterialProperties: MaterialProperties): Stats {
-    const gui = new Dat.GUI();
+function addColorPicker(propertyAccessor: () => THREE.Vector3, propertyName: string, folder: GUI) {
+    const colorHex = `#${new THREE.Color().setRGB(propertyAccessor().x, propertyAccessor().y, propertyAccessor().z, SRGBColorSpace).getHexString()}`;
+    const colorController = folder.addColor({color: colorHex}, 'color').name(propertyName);
+
+    colorController.onChange((value: string) => {
+        const color = new THREE.Color(value);
+        propertyAccessor().set(color.r, color.g, color.b);
+    });
+}
+
+export function createGUI(
+    landscapeMaterial: THREE.ShaderMaterial,
+    grassMaterial: THREE.ShaderMaterial,
+    grassUniforms: any,
+    directionalLight: MyDirectionalLight,
+    grassMaterialProperties: MaterialProperties,
+): Stats {
+    const gui = new Dat.GUI({width: 360});
 
     gui.add(landscapeMaterial, 'wireframe').name('Landscape Wireframe');
     gui.add(grassMaterial, 'wireframe').name('Grass Wireframe');
     gui.add(grassUniforms.u_show_normals, 'value').name('Show Grass Normals');
 
     const directionalLightFolder = gui.addFolder('Directional Light');
-    directionalLightFolder.addVector('Directional Light Color', directionalLight.color);
+    addColorPicker(() => directionalLight.color, 'Directional light Color', directionalLightFolder);
     directionalLightFolder.addVector('Directional Light Direction', directionalLight.direction);
+
+    const grassColorFolder = gui.addFolder('Grass Colors');
+    addColorPicker(() => grassUniforms.u_lower_color.value, 'Grass Lower Color', grassColorFolder);
+    addColorPicker(() => grassUniforms.u_upper_color.value, 'Grass Upper Color', grassColorFolder);
 
     const materialPropertiesFolder = gui.addFolder('Grass Material Properties');
     materialPropertiesFolder.add(grassMaterialProperties, 'ka', 0., 1.).name('Ambient Coefficient');

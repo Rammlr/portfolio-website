@@ -22,6 +22,8 @@ varying vec4 vWorldPosition;
 uniform float u_time;
 uniform MaterialProperties u_material_properties;
 uniform DirectionalLight u_directional_lights[DIRECTIONAL_LIGHT_COUNT];
+uniform vec3 u_lower_color;
+uniform vec3 u_upper_color;
 uniform bool u_show_normals;
 
 vec3 extractCamPosition() {
@@ -68,8 +70,7 @@ vec4 calculateLighting(vec4 objectColor) {
 }
 
 void main() {
-    vec3 green = vec3(0., 255., 0.) / 255.;
-    vec4 objectColor = vec4(mix(green, vec3(1.), vColor), 1.0);
+    vec4 objectColor = vec4(mix(u_lower_color, u_upper_color, vColor), 1.0);
 
     vec4 I = calculateLighting(objectColor);
 

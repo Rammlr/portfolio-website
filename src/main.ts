@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer.js";
 import {createGUI} from "./gui.ts";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
@@ -10,6 +9,7 @@ import grassFragmentShader from "./shaders/grass.frag";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 import {randomXZPositionMatrix, vector3ToHexNumber} from "./util.ts";
 import {MaterialProperties, MyDirectionalLight} from "./types.ts";
+import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass.js";
 
 const TIME_SPEED = .05;
 
@@ -58,11 +58,14 @@ let grassUniforms = { // arrays in here have to be padded to the max length
     u_time: {value: 0.0},
     u_material_properties: {value: grassMaterialProperties},
     u_directional_lights: {value: [directionalLight, directionalLight2]},
+    u_lower_color: {value: new THREE.Vector3(16., 130., 55.).divideScalar(255.)},
+    u_upper_color: {value: new THREE.Vector3(153., 237., 150.).divideScalar(255.)},
     u_show_normals: {value: false},
 };
 
-const renderPass = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
+
+const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
 
 const controls = new OrbitControls(camera, renderer.domElement);
