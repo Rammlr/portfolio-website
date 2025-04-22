@@ -13,9 +13,9 @@ import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass.js";
 
 const TIME_SPEED = .05;
 
-const PLANE_SIZE = 1000;
-const PLANE_SEGMENTS = 128;
-const GRASS_COUNT = 500000;
+const PLANE_SIZE = 2000;
+const PLANE_SEGMENTS = 256;
+const GRASS_COUNT = 1000000;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xd8ecff);
@@ -113,7 +113,7 @@ loader.load('/grass.glb', function (gltf) {
     scene.add(instancedGrassMesh);
 }, undefined, undefined);
 
-const arrowHelper = new THREE.ArrowHelper(directionalLight.direction, new THREE.Vector3(0, 150, 0), 100, vector3ToHexNumber(directionalLight.color));
+const arrowHelper = new THREE.ArrowHelper(directionalLight.direction, new THREE.Vector3(0, -150, 0), 100, vector3ToHexNumber(directionalLight.color));
 scene.add(arrowHelper);
 
 
