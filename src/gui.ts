@@ -45,6 +45,11 @@ export function createGUI(
     materialPropertiesFolder.add(grassMaterialProperties, 'alpha', 0., 5.).name('Shininess Exponent');
 
     const stats = new Stats();
+
+    // hide stats and controls per default, only in playground mode
+    stats.dom.classList.add('hidden');
+    gui.domElement.classList.add('hidden');
+    
     document.body.appendChild(stats.dom);
     return stats;
 }

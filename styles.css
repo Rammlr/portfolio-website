@@ -1,7 +1,13 @@
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: #222;
+    font-family: monospace;
+    color: grey;
 }
 
 .github-icon-container {
@@ -10,6 +16,7 @@ body {
     right: 10px;
     width: 60px;
     height: 60px;
+    z-index: 100;
 }
 
 .github-icon {
@@ -33,4 +40,121 @@ body {
 
 .dg .c {
     width: 30% !important;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+main {
+    width: 100vw;
+    height: 200vw;
+    z-index: 99;
+    position: absolute;
+    text-align: center;
+    font-size: 4vh;
+}
+
+#container {
+    margin: 20px 150px 20px 150px;
+    border-radius: 20px;
+    background: rgba(200, 200, 200, 0.2);
+}
+
+img {
+    filter: drop-shadow(0 0 0.75rem black);
+}
+
+section {
+    min-height: 100vh;
+    padding-top: 20px;
+    font-size: 4vh;
+}
+
+.left-align {
+    text-align: left;
+}
+
+.text-cycler {
+    display: inline-block;
+    width: 248px;
+    height: 1.5em;
+    vertical-align: top;
+    text-align: left;
+}
+
+.text-cycler span {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    animation: cycleText 18s infinite;
+}
+
+.text-cycler span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.text-cycler span:nth-child(2) {
+    animation-delay: 3s;
+}
+
+.text-cycler span:nth-child(3) {
+    animation-delay: 6s;
+}
+
+.text-cycler span:nth-child(4) {
+    animation-delay: 9s;
+}
+
+.text-cycler span:nth-child(5) {
+    animation-delay: 12s;
+}
+
+.text-cycler span:nth-child(6) {
+    animation-delay: 15s;
+}
+
+@keyframes cycleText {
+    5% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    25% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.wavy {
+    animation-name: wavy;
+    animation-duration: 2.0s;
+    animation-iteration-count: infinite;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+@keyframes wavy {
+    0% {
+        top: -10px;
+    }
+    50% {
+        top: 10px;
+    }
+    100% {
+        top: -10px;
+    }
 }

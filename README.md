@@ -1,3 +1,3 @@
-# My personal template project for threejs
+# My Portfolio Website :)
 
-TODO: replace with actual readme content
+Made with three js mainly
