@@ -10,7 +10,6 @@ import {enterPlaygroundMode, isOnMobile, randomXZPositionMatrix, vector3ToHexNum
 import {MaterialProperties, MyDirectionalLight} from "./types.ts";
 import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass.js";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
-import {addScrollControls} from "./scrollAnimator.ts";
 
 let isInPlaygroundMode = false;
 
@@ -45,7 +44,9 @@ scene.background = new THREE.Color(0xd8ecff);
 const camera = new THREE.PerspectiveCamera(
     60, window.innerWidth / window.innerHeight, 1, 20000
 );
-addScrollControls(camera);
+// addScrollControls(camera);
+camera.position.set(-842., 102., -5.4);
+camera.rotation.set(-1.6245, -1.45, -1.6249);
 
 const renderer = new THREE.WebGLRenderer({antialias: true, powerPreference: 'high-performance'});
 renderer.setSize(window.innerWidth, window.innerHeight);
