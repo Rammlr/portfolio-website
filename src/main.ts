@@ -6,28 +6,35 @@ import landscapeFragmentShader from "./shaders/landscape.frag";
 import grassVertexShader from "./shaders/grass.vert";
 import grassFragmentShader from "./shaders/grass.frag";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
-import {randomXZPositionMatrix, vector3ToHexNumber} from "./util.ts";
+import {enterPlaygroundMode, isOnMobile, randomXZPositionMatrix, vector3ToHexNumber} from "./util.ts";
 import {MaterialProperties, MyDirectionalLight} from "./types.ts";
 import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass.js";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
+import {addScrollControls} from "./scrollAnimator.ts";
 
-const TIME_SPEED = .05;
-
-const PLANE_SIZE = 2000;
-const PLANE_SEGMENTS = 256;
-const GRASS_COUNT = 1000000;
-
-export function enterPlaygroundMode() {
-    console.log('entering playground mode!! yippiee!!');
-    document.body.getElementsByTagName('main')[0].remove();
-    // make gui and stats visible (a bit hacky but who the fuck cares)
-    document.body.getElementsByClassName('hidden')[0].classList.remove('hidden');
-    document.body.getElementsByClassName('hidden')[0].classList.remove('hidden');
-    controls.connect();
-}
+let isInPlaygroundMode = false;
 
 // make it callable from html
-(window as any).enterPlaygroundMode = enterPlaygroundMode;
+(window as any).enterPlaygroundMode = () => {
+    enterPlaygroundMode(controls);
+    isInPlaygroundMode = true;
+}
+
+if (isOnMobile()) {
+    document.body.getElementsByTagName('main')[0].remove();
+    document.body.append(document.createElement('h1'));
+    const h1tag = document.body.getElementsByTagName('h1')[0];
+    h1tag.innerText = 'Mobile not supported. Please use a desktop browser.';
+    h1tag.style.zIndex = '99';
+    h1tag.style.position = 'absolute';
+    h1tag.style.padding = '20px';
+}
+
+const TIME_SPEED = .05;
+const PLANE_SIZE = 2000;
+const PLANE_SEGMENTS = 256;
+const GRASS_COUNT = isOnMobile() ? 200_000 : 1_000_000;
+
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xd8ecff);
@@ -36,8 +43,7 @@ scene.background = new THREE.Color(0xd8ecff);
 const camera = new THREE.PerspectiveCamera(
     60, window.innerWidth / window.innerHeight, 1, 20000
 );
-camera.position.set(-842., 102., -5.4);
-camera.rotation.set(-1.6245, -1.45, -1.6249);
+addScrollControls(camera);
 
 const renderer = new THREE.WebGLRenderer({antialias: true, powerPreference: 'high-performance'});
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -147,15 +153,16 @@ function animate() {
     grassUniforms.u_time.value += TIME_SPEED * delta;
     delta = clock.getDelta();
 
+    if (isInPlaygroundMode) {
+        controls.update(delta);
+    }
+
     composer.render();
-    controls.update(delta);
     arrowHelper.setDirection(directionalLight.direction.normalize());
     arrowHelper.setColor(vector3ToHexNumber(directionalLight.color))
     stats.update();
-    // TODO: add camera keyframes in the future
-    // see https://sbedit.net/ceca15090caba17178e2a4e08c1d1efce01db81c#L252-L252
-    // console.log(camera.position)
-    // console.log(camera.rotation)
+    // console.log(camera.position);
+    // console.log(camera.rotation);
 }
 
 animate();
