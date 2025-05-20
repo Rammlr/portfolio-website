@@ -28,6 +28,8 @@ if (isOnMobile()) {
     h1tag.style.zIndex = '99';
     h1tag.style.position = 'absolute';
     h1tag.style.padding = '20px';
+} else {
+    document.getElementsByClassName('hidden')[0].classList.remove('hidden');
 }
 
 const TIME_SPEED = .05;
